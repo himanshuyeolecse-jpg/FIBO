@@ -224,7 +224,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     .filter(r => r.completed && r.completedAt)
     .reduce((acc, r) => {
         // Fix: Use Number() for safer type conversion from 'unknown' from reminder data.
-        const day = new Date(Number(r.completedAt)).toLocaleDateString('en-US', { weekday: 'short' });
+        const day = new Date(r.completedAt as number).toLocaleDateString('en-US', { weekday: 'short' });
         acc[day] = (acc[day] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);

@@ -209,7 +209,7 @@ export const useKibo = () => {
                  addMessage(Role.MODEL, response);
                  speak(response, Mood.PLAYFUL);
             }
-        }, 180000); // 3 minutes
+        }, 420000); // 7 minutes
     }, [kiboState.mood, kiboState.status, isListening, speak, kiboState.language, kiboState.isKiboActive]);
 
     useEffect(() => {
@@ -247,7 +247,7 @@ export const useKibo = () => {
         };
 
         if (kiboState.isProactiveMode) {
-            intervalId = window.setInterval(handleProactiveCheck, 90000); // Check every 90 seconds
+            intervalId = window.setInterval(handleProactiveCheck, 300000); // Check every 5 minutes
         }
 
         return () => {
