@@ -1,0 +1,8 @@
+{
+  "name": "Kibo - AI Desktop Friend",
+  "description": "A personal AI companion for your desktop. Kibo is a friendly assistant that lives on your screen, talks with you, reminds you of tasks, reads information from images, cracks jokes, and keeps you company while you work.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

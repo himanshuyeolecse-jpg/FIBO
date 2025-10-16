@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kibo - AI Desktop Friend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* For custom scrollbar in chat */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.5);
+        border-radius: 20px;
+        border: transparent;
+      }
+
+      /* Custom Kibo Animations - Default Pack */
+      @keyframes breathing {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.03); }
+      }
+      .breathing-animation { animation: breathing 4s ease-in-out infinite; }
+      .breathing-happy { animation-duration: 2s; }
+      .breathing-sad { animation-duration: 6s; }
+
+      @keyframes nodding {
+        0%, 100% { transform: translateY(0) scaleY(1); }
+        50% { transform: translateY(-5px) scaleY(1.05); }
+      }
+      .nodding-animation { animation: nodding 1s ease-in-out infinite; }
+
+      @keyframes thinking-glow {
+        0%, 100% { box-shadow: 0 0 15px 5px var(--glow-color, rgba(148, 163, 179, 0.5)); }
+        50% { box-shadow: 0 0 25px 10px var(--glow-color, rgba(148, 163, 179, 0.7)); }
+      }
+      .thinking-glow-animation { animation: thinking-glow 2s ease-in-out infinite; }
+      
+      @keyframes eye-scan {
+        0%, 100% { transform: translateX(0px); }
+        25% { transform: translateX(-8px); }
+        75% { transform: translateX(8px); }
+      }
+      .eye-scan-animation { animation: eye-scan 3s ease-in-out infinite; }
+      
+      @keyframes blink {
+        0%, 95%, 100% { transform: scaleY(1); }
+        97.5% { transform: scaleY(0.1); }
+      }
+      .blinking-animation { animation: blink 4s ease-in-out infinite; }
+
+      /* Subtle Animation Pack */
+       @keyframes subtle-breathing {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.01); }
+      }
+      .subtle-breathing-animation { animation: subtle-breathing 5s ease-in-out infinite; }
+
+      @keyframes subtle-nodding {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-2px); }
+      }
+      .subtle-nodding-animation { animation: subtle-nodding 1.5s ease-in-out infinite; }
+
+      @keyframes subtle-thinking-glow {
+        0%, 100% { box-shadow: 0 0 10px 3px var(--glow-color, rgba(148, 163, 179, 0.4)); }
+        50% { box-shadow: 0 0 15px 5px var(--glow-color, rgba(148, 163, 179, 0.6)); }
+      }
+      .subtle-thinking-glow-animation { animation: subtle-thinking-glow 2.5s ease-in-out infinite; }
+
+      /* One-shot Expressive Reactions (shared) */
+      @keyframes head-tilt {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(-10deg); }
+      }
+      .reaction-head-tilt { animation: head-tilt 1s ease-in-out; }
+
+      @keyframes surprised {
+        0%, 100% { transform: scale(1); }
+        30% { transform: scale(1.1) translateY(-10px); }
+        60% { transform: scale(0.95); }
+      }
+      .reaction-surprised { animation: surprised 0.5s ease-out; }
+
+      @keyframes nod {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(5px) scaleY(0.95); }
+      }
+      .reaction-nod { animation: nod 0.6s ease-in-out; }
+
+      /* IDLE ANIMATIONS */
+      @keyframes idle-look-around {
+        0%, 100% { transform: translateX(0); }
+        20%, 80% { transform: translateX(-6px); }
+        40%, 60% { transform: translateX(6px); }
+      }
+      .idle-look-around-animation { animation: idle-look-around 2.5s ease-in-out; }
+
+      @keyframes idle-hop {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px) scale(1.05); }
+      }
+      .idle-hop-animation { animation: idle-hop 0.5s ease-in-out; }
+
+      @keyframes idle-wink {
+        0%, 100% { transform: scaleY(1); }
+        50% { transform: scaleY(0.1); }
+      }
+      .idle-wink-animation { animation: idle-wink 0.3s ease-in-out; }
+
+      @keyframes idle-muzan-glance {
+        0%, 100% { transform: translateX(0) scaleX(1); }
+        40%, 60% { transform: translateX(4px) scaleX(1.1); }
+      }
+      .idle-glance-animation { animation: idle-muzan-glance 1.5s ease-in-out; }
+
+      @keyframes idle-muzan-tilt {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(-5deg) translateY(-2px); }
+      }
+      .idle-tilt-animation { animation: idle-muzan-tilt 2s ease-in-out; }
+
+
+      /* Anime Avatar Animations */
+      @keyframes anime-blink {
+        0%, 95%, 100% { transform: scaleY(1); }
+        97.5% { transform: scaleY(0.05); }
+      }
+      .anime-blinking-animation { animation: anime-blink 3s ease-in-out infinite; }
+
+      @keyframes anime-speak {
+        0%, 100% { d: path("M 40 75 Q 50 72 60 75"); }
+        50% { d: path("M 40 75 Q 50 82 60 75"); }
+      }
+      .anime-speaking-animation { animation: anime-speak 0.3s ease-in-out infinite; }
+      
+      @keyframes anime-thinking-sparkle {
+        0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+        50% { opacity: 1; transform: scale(1) rotate(180deg); }
+      }
+      .anime-thinking-animation { animation: anime-thinking-sparkle 1.5s ease-in-out infinite; }
+      
+      @keyframes anime-subtle-breathing {
+         0%, 100% { transform: translateY(0); }
+         50% { transform: translateY(-1px); }
+      }
+      .anime-breathing-animation { animation: anime-subtle-breathing 4s ease-in-out infinite; }
+
+      /* Muzan Avatar Animations */
+      @keyframes muzan-blink {
+        0%, 97%, 100% { transform: scaleY(1); }
+        98.5% { transform: scaleY(0.05); }
+      }
+      .muzan-blinking-animation { animation: muzan-blink 5s ease-in-out infinite; }
+
+      @keyframes muzan-speak {
+        0%, 100% { transform: scaleY(1); }
+        50% { transform: scaleY(1.1) translateY(1px); }
+      }
+      .muzan-speaking-animation { animation: muzan-speak 0.4s ease-in-out infinite; }
+
+      @keyframes muzan-eye-glow {
+        0%, 100% { fill: #9c2144; filter: none; }
+        50% { fill: #ff4d4d; filter: url(#muzan-red-glow); }
+      }
+      .muzan-angry-glow { animation: muzan-eye-glow 1.5s ease-in-out infinite; }
+
+      /* Gojo Avatar Animations */
+      @keyframes gojo-breathing {
+         0%, 100% { transform: translateY(0); }
+         50% { transform: translateY(-2px); }
+      }
+      .gojo-breathing-animation { animation: gojo-breathing 4s ease-in-out infinite; }
+
+      @keyframes gojo-speak {
+        0%, 100% { d: path("M 45 68 Q 50 70 55 68"); }
+        50% { d: path("M 45 68 Q 50 74 55 68"); }
+      }
+      .gojo-speaking-animation { animation: gojo-speak 0.3s ease-in-out infinite; }
+      
+      @keyframes gojo-infinity-glow {
+        0%, 100% { filter: drop-shadow(0 0 4px rgba(0, 180, 255, 0.7)); }
+        50% { filter: drop-shadow(0 0 12px rgba(0, 180, 255, 1)); }
+      }
+      .gojo-thinking-glow { animation: gojo-infinity-glow 1.5s ease-in-out infinite; }
+
+      @keyframes gojo-idle-glance {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(5deg) translateX(2px); }
+      }
+      .gojo-idle-glance-animation { animation: gojo-idle-glance 2.5s ease-in-out; }
+
+      /* Generated Avatar Animations */
+      @keyframes generated-avatar-speak {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+      }
+      .generated-speaking-animation { animation: generated-avatar-speak 0.4s ease-in-out infinite; }
+      
+      @keyframes generated-avatar-think-glow {
+        0%, 100% { filter: drop-shadow(0 0 5px rgba(167, 139, 250, 0.7)); }
+        50% { filter: drop-shadow(0 0 15px rgba(167, 139, 250, 1)); }
+      }
+      .generated-thinking-animation { animation: generated-avatar-think-glow 2s ease-in-out infinite; }
+      
+      @keyframes generated-avatar-listen-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      .generated-listening-animation { animation: generated-avatar-listen-pulse 1s ease-in-out infinite; }
+
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-transparent">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
