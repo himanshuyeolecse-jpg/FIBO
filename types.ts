@@ -3,8 +3,6 @@ import {
   GenerateContentResponse,
   GoogleGenAI,
   Part,
-  EnhancedSession,
-  InputContent,
 } from '@google/genai';
 
 export enum Role {

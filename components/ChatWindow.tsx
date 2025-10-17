@@ -248,15 +248,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   const containerClasses = isFloatingMode
     ? 'bg-transparent'
-    : 'bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30';
+    : 'bg-white/80 backdrop-blur-md rounded-lg shadow-2xl border border-white/30';
 
   const headerClasses = isFloatingMode
     ? 'bg-black/20'
-    : 'bg-slate-100/50 border-b border-slate-200/80';
+    : 'bg-gray-100/80 border-b border-gray-300/80 rounded-t-lg';
     
   const tabsContainerClasses = isFloatingMode
     ? 'bg-black/20 border-b border-slate-600/50'
     : 'bg-slate-100/50 border-b border-slate-200/80';
+    
+  const windowButtonClasses = `p-2 transition-colors ${isFloatingMode ? 'text-slate-300 hover:bg-white/20' : 'text-slate-600 hover:bg-slate-300/50'}`;
+  const windowCloseButtonClasses = `p-2 transition-colors ${isFloatingMode ? 'text-slate-300 hover:bg-red-500' : 'text-slate-600 hover:bg-red-500 hover:text-white'}`;
+
 
   return (
     <div 
@@ -264,22 +268,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         style={{ width: `${size.width}px`, height: isMinimized ? 'auto' : `${size.height}px` }}
     >
       {/* Header */}
-      <div className={`drag-handle p-3 flex justify-between items-center cursor-move ${headerClasses}`}>
-        {isFocusModeActive && focusSessionEndTime && focusSessionTask ? (
-            <FocusTimer endTime={focusSessionEndTime} task={focusSessionTask} />
-        ) : (
-             <h2 className={`text-lg font-bold ${isFloatingMode ? 'text-white' : 'text-slate-800'}`}>{currentCharacterName || 'Kibo'}</h2>
-        )}
-        <div className={`flex items-center space-x-2 ${isFloatingMode ? 'text-slate-300' : 'text-slate-500'}`}>
-            <button onClick={onToggleMaximize} className="p-1 hover:text-white transition-colors" title={isMaximized ? "Restore" : "Maximize"}>
-                {isMaximized ? <RestoreIcon className="w-4 h-4" /> : <MaximizeIcon className="w-4 h-4" />}
-            </button>
-            <button onClick={onToggleMinimize} className="p-1 hover:text-white transition-colors" title={isMinimized ? "Expand" : "Minimize"}>
-                {isMinimized ? <MaximizeIcon className="w-4 h-4" /> : <MinimizeIcon className="w-4 h-4" />}
-            </button>
-             <div className="relative">
-                <button onClick={() => setShowLangDropdown(!showLangDropdown)} className="p-1 hover:text-blue-400 transition-colors" title="Change Language">
-                    <GlobeIcon className="w-5 h-5" />
+      <div className={`drag-handle p-1 flex justify-between items-center cursor-move ${headerClasses}`}>
+        <div className="pl-3 flex-1">
+            {isFocusModeActive && focusSessionEndTime && focusSessionTask ? (
+                <FocusTimer endTime={focusSessionEndTime} task={focusSessionTask} />
+            ) : (
+                 <h2 className={`text-sm font-semibold truncate ${isFloatingMode ? 'text-white' : 'text-slate-800'}`}>{currentCharacterName || 'Kibo'}</h2>
+            )}
+        </div>
+        <div className="flex items-center">
+            <div className="relative">
+                <button onClick={() => setShowLangDropdown(!showLangDropdown)} className={windowButtonClasses} title="Change Language">
+                    <GlobeIcon className="w-4 h-4" />
                 </button>
                 {showLangDropdown && (
                     <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-10 border border-slate-200/80">
@@ -303,8 +303,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                 )}
             </div>
             <div className="relative">
-                <button onClick={() => setShowSettingsDropdown(!showSettingsDropdown)} className="p-1 hover:text-white transition-colors" title="Settings">
-                    <SettingsIcon className="w-5 h-5" />
+                <button onClick={() => setShowSettingsDropdown(!showSettingsDropdown)} className={windowButtonClasses} title="Settings">
+                    <SettingsIcon className="w-4 h-4" />
                 </button>
                 {showSettingsDropdown && (
                      <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-slate-200/80 p-4 space-y-4">
@@ -344,16 +344,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                                 </div>
                                <ToggleSwitch checked={isProactiveMode} onChange={onToggleProactiveMode} />
                             </div>
-                             <div className="border-t border-slate-200 pt-3">
-                                <button onClick={onToggleKiboActive} className="w-full flex items-center justify-center gap-2 bg-red-500 text-white font-semibold py-2 px-3 rounded-lg hover:bg-red-600 disabled:opacity-50">
-                                    <PowerIcon className="w-5 h-5" />
-                                    Power Off Kibo
-                                </button>
-                            </div>
                         </div>
                      </div>
                 )}
             </div>
+            <button onClick={onToggleMinimize} className={windowButtonClasses} title={isMinimized ? "Expand" : "Minimize"}>
+                <MinimizeIcon className="w-4 h-4" />
+            </button>
+            <button onClick={onToggleMaximize} className={windowButtonClasses} title={isMaximized ? "Restore" : "Maximize"}>
+                {isMaximized ? <RestoreIcon className="w-4 h-4" /> : <MaximizeIcon className="w-4 h-4" />}
+            </button>
+            <button onClick={onToggleKiboActive} className={windowCloseButtonClasses} title="Power Off Kibo">
+                <CloseIcon className="w-4 h-4" />
+            </button>
         </div>
       </div>
       

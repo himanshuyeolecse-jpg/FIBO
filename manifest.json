@@ -1,0 +1,23 @@
+{
+  "name": "Kibo - AI Desktop Friend",
+  "short_name": "Kibo",
+  "description": "A personal AI companion for your desktop.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192' fill='none'><rect width='192' height='192' rx='36' fill='%231e293b'/><circle cx='96' cy='96' r='54' fill='%2364748b'/><circle cx='96' cy='96' r='20' fill='%23e2e8f0'/></svg>",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 192 192' fill='none'><rect width='192' height='192' rx='36' fill='%231e293b'/><circle cx='96' cy='96' r='54' fill='%2364748b'/><circle cx='96' cy='96' r='20' fill='%23e2e8f0'/></svg>",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}

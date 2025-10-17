@@ -4,8 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kibo - AI Desktop Friend</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1e293b">
+    <link rel="apple-touch-icon" href="/icon-192x192.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
       /* For custom scrollbar in chat */
       .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
@@ -229,5 +236,16 @@
   <body class="bg-transparent">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>

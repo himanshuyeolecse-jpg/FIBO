@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useKibo } from './hooks/useKibo';
 import KiboAvatar from './components/KiboAvatar';
@@ -265,12 +266,20 @@ const App: React.FC = () => {
             </div>
         ) : (
             <div 
-                className="drag-handle cursor-move bg-slate-800/90 backdrop-blur-md rounded-2xl p-8 flex flex-col items-center justify-center text-white text-center"
+                className="relative drag-handle cursor-move bg-slate-800/90 backdrop-blur-md rounded-2xl p-8 flex flex-col items-center justify-center text-white text-center"
                 style={{ width: `${size.width}px`, height: `${size.height}px` }}
             >
                 <h3 className="text-2xl font-bold">Kibo is Sleeping</h3>
                 <p className="text-slate-300 mt-2 mb-6">Toggle the switch to wake Kibo up.</p>
                 <ToggleSwitch checked={kiboState.isKiboActive} onChange={handleToggleKiboActive} label="Wake Up" />
+                <div 
+                    onMouseDown={handleResizeMouseDown}
+                    className="absolute -bottom-1 -right-1 w-4 h-4 cursor-se-resize opacity-50 hover:opacity-100 transition-opacity"
+                >
+                    <svg width="16" height="16" viewBox="0 0 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 0V16H0L16 0Z" fill="#a0aec0"/>
+                    </svg>
+                </div>
             </div>
         )}
       </div>
