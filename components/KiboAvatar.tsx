@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mood, KiboStatus, Reaction, AnimationPack, AvatarStyle } from '../types';
+import { Mood, KiboStatus, Reaction, AnimationPack, AvatarStyle, FestivalInfo } from '../types';
 import AbstractAvatar from './AbstractAvatar';
 import AnimeAvatar from './AnimeAvatar';
 import MuzanAvatar from './MuzanAvatar';
@@ -14,7 +14,31 @@ interface KiboAvatarProps {
   avatarStyle: AvatarStyle;
   generatedAvatarUrl: string | null;
   currentCharacterName: string | null;
+  currentFestival: FestivalInfo | null;
 }
+
+const FestivalAvatar: React.FC<{ festival: FestivalInfo; onClick: () => void }> = ({ festival, onClick }) => {
+    return (
+        <div
+            className="relative w-28 h-28 cursor-pointer group transition-transform duration-300 hover:scale-110"
+            onClick={onClick}
+        >
+             <div className="relative w-full h-full">
+                <div className="absolute inset-0 bg-yellow-300 rounded-full blur-lg opacity-60 animate-pulse"></div>
+                <div className="relative w-full h-full rounded-full flex items-center justify-center overflow-hidden border-4 border-yellow-400/80 shadow-lg bg-yellow-100">
+                    <img 
+                        src={festival.gifUrl} 
+                        alt={`${festival.name} festival`} 
+                        className="w-full h-full object-cover rounded-full"
+                    />
+                </div>
+             </div>
+             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-yellow-800 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+                Happy {festival.name}!
+            </div>
+        </div>
+    );
+};
 
 const GeneratedAvatar: React.FC<KiboAvatarProps> = (props) => {
     const { generatedAvatarUrl, onClick, status, currentCharacterName, reaction, mood } = props;
@@ -120,6 +144,10 @@ const GeneratedAvatar: React.FC<KiboAvatarProps> = (props) => {
 
 
 const KiboAvatar: React.FC<KiboAvatarProps> = (props) => {
+    if (props.currentFestival) {
+        return <FestivalAvatar festival={props.currentFestival} onClick={props.onClick} />;
+    }
+
     if (props.avatarStyle === AvatarStyle.GENERATED) {
         return <GeneratedAvatar {...props} />;
     }

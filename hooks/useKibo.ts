@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { KiboState, Message, Reminder, Role, Mood, KiboStatus, TextPart, ImagePart, NotificationData, Language, languages, Reaction, VoiceName, AnimationPack, AvatarStyle, avatarVoiceMap, LearnedFact, MoodEntry } from '../types';
+import { KiboState, Message, Reminder, Role, Mood, KiboStatus, TextPart, ImagePart, NotificationData, Language, languages, Reaction, VoiceName, AnimationPack, AvatarStyle, avatarVoiceMap, LearnedFact, MoodEntry, checkCurrentFestival } from '../types';
 import * as geminiService from '../services/geminiService';
 import { playAudio, fileToBase64, captureScreenAsBase64, readFileAsText } from '../utils/audio';
 
@@ -97,6 +97,7 @@ export const useKibo = () => {
             focusSessionTask: null,
             isKiboActive: savedIsKiboActive,
             isFloatingMode: savedIsFloatingMode,
+            currentFestival: null,
         };
     });
 
@@ -161,12 +162,23 @@ export const useKibo = () => {
         speak(`Reminder set for, ${task}`, Mood.HAPPY);
     }, [speak]);
 
-    // Welcome message
+    // Welcome message & Festival Greeting
     useEffect(() => {
         if (!kiboState.isKiboActive || kiboState.messages.length > 0) return;
-        const welcomeMessage = "Hello! I'm Kibo, your friendly desktop companion. How can I help you today?";
-        addMessage(Role.MODEL, welcomeMessage);
-        speak(welcomeMessage, Mood.HAPPY);
+
+        const festival = checkCurrentFestival();
+        if (festival) {
+            setKiboState(prev => ({
+                ...prev,
+                currentFestival: { name: festival.name, gifUrl: festival.gifUrl }
+            }));
+            addMessage(Role.MODEL, festival.greeting);
+            speak(festival.greeting, Mood.HAPPY);
+        } else {
+            const welcomeMessage = "Hello! I'm Kibo, your friendly desktop companion. How can I help you today?";
+            addMessage(Role.MODEL, welcomeMessage);
+            speak(welcomeMessage, Mood.HAPPY);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [kiboState.isKiboActive]);
 
@@ -306,7 +318,7 @@ export const useKibo = () => {
             const newLang = isAnimeCharacter ? 'ja-JP' : kiboState.userPreferredLanguage;
 
             const prompt = "Confirm your transformation into your new character form in a very brief, in-character message.";
-            const { text: confirmationText } = await geminiService.getConversationalResponse([], prompt, Mood.HAPPY, newLang, newStyle, newCharName);
+            const { text: confirmationText } = await geminiService.getConversationalResponse([], prompt, Mood.HAPPY, newLang, newStyle, newCharName, kiboState.currentFestival?.name);
             
             setKiboState(prev => ({
                 ...prev,
@@ -329,7 +341,7 @@ export const useKibo = () => {
             speak(errorMsg, Mood.SAD);
             setKiboState(prev => ({ ...prev, status: KiboStatus.IDLE, isLoading: false }));
         }
-    }, [speak, kiboState.userPreferredLanguage]);
+    }, [speak, kiboState.userPreferredLanguage, kiboState.currentFestival]);
 
 
     const handleStartFocusSession = (task: string, durationMinutes: number) => {
@@ -442,7 +454,8 @@ export const useKibo = () => {
                         detectedMood, 
                         kiboState.language,
                         kiboState.avatarStyle,
-                        kiboState.currentCharacterName
+                        kiboState.currentCharacterName,
+                        kiboState.currentFestival?.name
                     );
                     
                     if (functionCalls && functionCalls.length > 0) {
@@ -545,7 +558,7 @@ export const useKibo = () => {
 
         setKiboState(prev => ({ ...prev, isLoading: true, status: KiboStatus.THINKING }));
         try {
-            const { text: responseText } = await geminiService.getConversationalResponse([], prompt, Mood.NEUTRAL, lang, kiboState.avatarStyle, kiboState.currentCharacterName);
+            const { text: responseText } = await geminiService.getConversationalResponse([], prompt, Mood.NEUTRAL, lang, kiboState.avatarStyle, kiboState.currentCharacterName, kiboState.currentFestival?.name);
             addMessage(Role.MODEL, responseText);
             speak(responseText, Mood.HAPPY);
         } catch (error) {

@@ -9,7 +9,7 @@ if (!API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-function getSystemInstruction(avatarStyle: AvatarStyle, characterName: string | null, mood: Mood, lang: Language): string {
+function getSystemInstruction(avatarStyle: AvatarStyle, characterName: string | null, mood: Mood, lang: Language, festivalName?: string): string {
     const langName = languages[lang].name;
     let basePrompt = characterProfiles[avatarStyle] || characterProfiles.ABSTRACT;
 
@@ -38,8 +38,10 @@ function getSystemInstruction(avatarStyle: AvatarStyle, characterName: string | 
         default:
              moodInstruction = 'Respond naturally according to your character persona.';
     }
+
+    const festivalInstruction = festivalName ? `It is currently the festival of ${festivalName}. Incorporate festive greetings and themes into your responses.` : '';
     
-    return `${basePrompt} ${cognitivePrompt} ${moodInstruction} IMPORTANT: You MUST respond in ${langName}.`;
+    return `${basePrompt} ${cognitivePrompt} ${moodInstruction} ${festivalInstruction} IMPORTANT: You MUST respond in ${langName}.`;
 }
 
 const changeCharacterFunctionDeclaration: FunctionDeclaration = {
@@ -132,10 +134,11 @@ export async function getConversationalResponse(
     mood: Mood,
     lang: Language,
     avatarStyle: AvatarStyle,
-    currentCharacterName: string | null
+    currentCharacterName: string | null,
+    festivalName?: string
 ): Promise<{ text: string; functionCalls?: { name: string; args: any }[] }> {
     const model = 'gemini-2.5-flash';
-    const systemInstruction = getSystemInstruction(avatarStyle, currentCharacterName, mood, lang);
+    const systemInstruction = getSystemInstruction(avatarStyle, currentCharacterName, mood, lang, festivalName);
 
     const contents = history.map(msg => ({
         role: msg.role === Role.USER ? 'user' : 'model',
@@ -349,7 +352,8 @@ export async function detectMood(message: string, lang: Language): Promise<Mood>
                             type: Type.STRING,
                             enum: Object.values(Mood)
                         }
-                    }
+                    },
+                    required: ['mood']
                 }
             }
         });

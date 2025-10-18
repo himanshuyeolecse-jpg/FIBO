@@ -56,6 +56,47 @@ export const languages: Record<Language, { name: string; flag: string; nativeNam
     'hi-IN': { name: 'Hindi', flag: '🇮🇳', nativeName: 'हिन्दी' },
 };
 
+export interface FestivalInfo {
+    name: string;
+    gifUrl: string;
+}
+
+interface Festival extends FestivalInfo {
+  // month is 0-indexed (0=Jan, 1=Feb, etc.)
+  date: { month: number; day: number };
+  greeting: string;
+}
+
+// NOTE: Festival dates are for demonstration and may not be accurate for all years.
+// A real application would use a dynamic calendar API.
+const indianFestivals: Festival[] = [
+  {
+    name: 'Diwali',
+    date: { month: 10, day: 1 }, // November 1st (Example for 2024)
+    gifUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTY0Y2QwZDAxYTgxZWI3YmFhMjY4NTM4MDcxYWE5MmI0OWFjYmJjZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o752k24iU1i7a7v20/giphy.gif',
+    greeting: 'Happy Diwali! ✨ Wishing you a festival full of light, joy, and prosperity.'
+  },
+  {
+    name: 'Holi',
+    date: { month: 2, day: 14 }, // March 14th (Example for 2025)
+    gifUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2FkZTVhYjA1Zjc4OWY4NTFhYzY3N2ZjMmY4MmMxZjI2YjQxNzIyZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6wNVI9p7jhc6J3i0/giphy.gif',
+    greeting: 'Happy Holi! 🎨 Hope your day is filled with colors, fun, and happiness.'
+  }
+];
+
+export const checkCurrentFestival = (): Festival | null => {
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentDay = today.getDate();
+
+  for (const festival of indianFestivals) {
+    if (festival.date.month === currentMonth && festival.date.day === currentDay) {
+      return festival;
+    }
+  }
+  return null;
+}
+
 
 export interface ImagePart {
     type: 'image';
@@ -119,6 +160,7 @@ export interface KiboState {
     focusSessionTask: string | null;
     isKiboActive: boolean;
     isFloatingMode: boolean;
+    currentFestival: FestivalInfo | null;
 }
 
 export type VoiceName = 'Puck' | 'Charon' | 'Kore' | 'Fenrir' | 'Zephyr';

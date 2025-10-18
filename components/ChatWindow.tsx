@@ -1,3 +1,5 @@
+
+
 import React, { useRef, useEffect, useState } from 'react';
 import { KiboState, Message, Reminder, Role, TextPart, ImagePart, Language, languages, VoiceName, AnimationPack, availableVoices, LearnedFact, Mood, MoodEntry, AvatarStyle } from '../types';
 import { MicIcon, SendIcon, PaperclipIcon, BellIcon, CloseIcon, MagicWandIcon, GlobeIcon, SettingsIcon, MinimizeIcon, MaximizeIcon, RestoreIcon, SparklesIcon, BrainCircuitIcon, ChatBubbleIcon, LinkIcon, TargetIcon, CheckCircleIcon, FileTextIcon, PlayIcon, ClipboardIcon, WrenchIcon, PowerIcon, EyeIcon, UserCircleIcon } from './icons';
@@ -224,7 +226,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     .filter(r => r.completed && r.completedAt)
     .reduce((acc, r) => {
         // Fix: Use Number() for safer type conversion from 'unknown' from reminder data.
-        const day = new Date(r.completedAt as number).toLocaleDateString('en-US', { weekday: 'short' });
+        // FIX: Explicitly convert r.completedAt to a number to satisfy the Date constructor's type requirement.
+        // FIX: Explicitly cast r.completedAt to a number to resolve TypeScript error.
+        const day = new Date(Number(r.completedAt)).toLocaleDateString('en-US', { weekday: 'short' });
         acc[day] = (acc[day] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);
